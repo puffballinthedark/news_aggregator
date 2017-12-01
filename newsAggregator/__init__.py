@@ -19,7 +19,7 @@ def main():
 
 
 def loop_through_news(news):
-    file = open('/home/skyler/news_aggregator/newsAggregator/data_lists/country-keyword-list.csv', encoding = 'UTF-16')
+    file = open('data_lists/country-keyword-list.csv', encoding = 'UTF-16')
     country_dict = {}
 
     for line in file:
@@ -37,7 +37,7 @@ def loop_through_news(news):
         for key, value in country_dict.items():
             for item in value:
                 if item in string_dictionary:
-                    print (news.entries[i].title)
+                    print(key)
         i += 1
 
 
