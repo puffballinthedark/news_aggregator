@@ -5,32 +5,29 @@ import string
 import json
 import sqlalchemy
 from flask_sqlalchemy import SQLAlchemy
+from engine import *
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
-db = SQLAlchemy(app)
-
 cnn_worldnews = feedparser.parse('http://rss.cnn.com/rss/cnn_world.rss')
 
-class master(db.Model):
+app.config['SQLALCHEMY_DATABASE_URI'] = engine
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
+db = SQLAlchemy(app)
+
+class all_countries(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     country = db.Column(db.String(2000))
-    
     def __init__ (self, country):
-        self.country = country 
+        self.country = country
 
-@app.route("/")
-def main():
-    db.create_all()
-    return render_template('index.html')
+class news_urls(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    url = db.Column(db.String(50))
+    countries = db.Column(db.String(50))
+    def __init__(self, url, countries):
+        self.countries = countries
+        self.url = url
 
-def sql_test():
-    test = master(country = "US")
-    db.session.add(test)
-    db.session.flush()
-    db.session.commit()
-
-        
 def loop_through_news(news):
     file = open('data_lists/country-keyword-list.csv', encoding = 'UTF-16')
     country_dict = {}
@@ -59,6 +56,21 @@ def loop_through_news(news):
         i += 1
 
 loop_through_news(cnn_worldnews)
+
+@app.route("/")
+def main():
+    db.create_all()
+    return render_template('index.html')
+
+def sql_test():
+    test = all_countries(country="gzdf")
+    testy = news_urls(url="fda", countries="Dsa")
+    db.session.add(testy)
+    db.session.add(test)
+    db.session.flush()
+    db.session.commit()
+
+
 sql_test()
 
 if __name__ == "__main__":
